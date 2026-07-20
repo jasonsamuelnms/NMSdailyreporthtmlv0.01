@@ -123,6 +123,18 @@
                 </form>
             </div>
 
+            <!-- Institution Filter -->
+            <div class="bg-gray-950 text-white p-4 rounded-2xl shadow-md space-y-3 border border-gray-800 my-4">
+                <label class="block text-[11px] font-bold uppercase tracking-wider text-gray-400">Filter View by Institution</label>
+                <select id="institutionFilter" class="w-full bg-gray-900 text-white text-xs font-bold px-3 py-2 rounded-lg border border-gray-700 focus:outline-none focus:border-blue-500">
+                    <option value="ALL">Show All Institutions</option>
+                    <option value="MAT">MAT</option>
+                    <option value="MATRIC">MATRIC</option>
+                    <option value="KIND CBE">KIND CBE</option>
+                    <option value="CBSE CBE">CBSE CBE</option>
+                </select>
+            </div>
+
             <!-- Operations Summary Counters Grid Grid -->
             <div class="grid grid-cols-2 gap-4">
                 <!-- Need Approval Counter Container -->
@@ -165,7 +177,7 @@
                 <!-- Vertical Scrollable Task Cards Container Workspace -->
                 <div class="p-4 flex-1 overflow-y-auto space-y-4 custom-scrollbar">
                     <template x-for="task in getTasksByColumn('Need Approval')" :key="task.id">
-                        <div class="bg-white p-4 rounded-xl border border-gray-200 shadow-sm hover:shadow transition space-y-3 relative group">
+                        <div class="bg-white p-4 rounded-xl border border-gray-200 shadow-sm hover:shadow transition space-y-3 relative group" :data-institution="task.institution">
                             
                             <!-- Card Decorative Title Pin Anchor -->
                             <div class="flex justify-between items-center border-b border-gray-50 pb-2">
@@ -226,7 +238,7 @@
                 <!-- Vertical Scrollable Task Cards Container Workspace -->
                 <div class="p-4 flex-1 overflow-y-auto space-y-4 custom-scrollbar">
                     <template x-for="task in getTasksByColumn('Corrections')" :key="task.id">
-                        <div class="bg-white p-4 rounded-xl border border-gray-200 shadow-sm hover:shadow transition space-y-3 relative group">
+                        <div class="bg-white p-4 rounded-xl border border-gray-200 shadow-sm hover:shadow transition space-y-3 relative group" :data-institution="task.institution">
                             
                             <!-- Card Heading Context Container -->
                             <div class="flex justify-between items-center border-b border-gray-50 pb-2">
@@ -351,6 +363,24 @@
                 }
             }
         }
+        
     </script>
+
+    <script>
+        document.getElementById('institutionFilter').addEventListener('change', function(e) {
+            const selectedValue = e.target.value;
+            const cards = document.querySelectorAll('[data-institution]');
+            
+            cards.forEach(card => {
+                const matchesFilter = selectedValue === 'ALL' || card.getAttribute('data-institution') === selectedValue;
+                if (matchesFilter) {
+                    card.style.display = '';
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+        });
+    </script>
+    
 </body>
 </html>
