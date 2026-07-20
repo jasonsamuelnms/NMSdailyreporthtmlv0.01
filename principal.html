@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>National Model Group of Schools - Principal Dashboard</title>
+    
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Alpine.js CDN -->
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+
+    <style>
+        [x-cloak] { display: none !important; }
+        .network-bg {
+            background-color: #ffffff;
+            background-image: radial-gradient(#e5e7eb 1px, transparent 1px), radial-gradient(#e5e7eb 1px, #ffffff 1px);
+            background-size: 40px 40px;
+            background-position: 0 0, 20px 20px;
+        }
+        /* Custom scrollbar configurations for high-density columns */
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 6px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: #f1f5f9;
+            border-radius: 8px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 8px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
+        }
+    </style>
+</head>
+<body class="network-bg min-h-screen font-sans antialiased text-gray-900 p-4 md:p-6" x-data="PrincipalDashboard()" x-cloak>
+
+    <!-- Top Dynamic Header Matrix -->
+    <header class="w-full flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6 md:mb-8 border-b border-gray-100 pb-4 bg-white/80 backdrop-blur-sm p-4 rounded-xl shadow-sm">
+        <div>
+            <h1 class="text-3xl md:text-4xl font-extrabold text-gray-800 tracking-tight">
+                Welcome <span class="text-[#3b82f6]">Principal</span>
+            </h1>
+        </div>
+        <div class="text-right flex flex-col items-end">
+            <h2 class="text-xl md:text-2xl font-black text-[#1e3a8a] tracking-wide uppercase font-serif">
+                National Model
+            </h2>
+            <p class="text-sm font-bold tracking-wider text-[#2563eb] uppercase -mt-1">
+                Group of Schools
+            </p>
+        </div>
+    </header>
+
+    <!-- Main Workspace Matrix Container -->
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+        
+        <!-- ==================== LEFT COLUMN: CONTROLS & METRICS ==================== -->
+        <div class="lg:col-span-3 space-y-6">
+            
+            <!-- Create a Task Card Component -->
+            <div class="bg-[#1e3a8a] text-white p-5 rounded-2xl shadow-lg border border-blue-900">
+                <div class="flex items-center gap-2 mb-4 justify-center sm:justify-start">
+                    <span class="text-xl">📋</span>
+                    <h3 class="text-lg font-black uppercase tracking-wider text-yellow-400">Create a Task</h3>
+                </div>
+                
+                <form @submit.prevent="handleCreateTask" class="space-y-4">
+                    <!-- Institution Field -->
+                    <div>
+                        <label class="block text-[11px] font-bold uppercase tracking-wider text-blue-200 mb-1">Institution</label>
+                        <select x-model="form.institution" class="w-full bg-white text-gray-900 text-xs font-semibold px-3 py-2 rounded-lg border border-blue-700 focus:outline-none focus:ring-2 focus:ring-yellow-400">
+                            <option value="MAT">MAT</option>
+                            <option value="MATRIC">MATRIC</option>
+                            <option value="KIND CBE">KIND CBE</option>
+                            <option value="CBSE CBE">CBSE CBE</option>
+                        </select>
+                    </div>
+
+                    <!-- Post Category Field -->
+                    <div>
+                        <label class="block text-[11px] font-bold uppercase tracking-wider text-blue-200 mb-1">Post Category</label>
+                        <select x-model="form.category" class="w-full bg-white text-gray-900 text-xs font-semibold px-3 py-2 rounded-lg border border-blue-700 focus:outline-none focus:ring-2 focus:ring-yellow-400">
+                            <option value="YOUTUBE">YOUTUBE</option>
+                            <option value="META">META</option>
+                            <option value="WEBSITE">WEBSITE</option>
+                        </select>
+                    </div>
+
+                    <!-- Layout Dimensions Split Frame -->
+                    <div class="grid grid-cols-2 gap-3">
+                        <div>
+                            <label class="block text-[11px] font-bold uppercase tracking-wider text-blue-200 mb-1">Target Channel</label>
+                            <select x-model="form.channel" class="w-full bg-white text-gray-900 text-xs font-semibold px-2 py-2 rounded-lg border border-blue-700 focus:outline-none focus:ring-2 focus:ring-yellow-400">
+                                <option value="4:5">4:5</option>
+                                <option value="16:9">16:9</option>
+                                <option value="9:16">9:16</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-[11px] font-bold uppercase tracking-wider text-blue-200 mb-1">Creative Aspect</label>
+                            <select x-model="form.aspect" class="w-full bg-white text-gray-900 text-xs font-semibold px-2 py-2 rounded-lg border border-blue-700 focus:outline-none focus:ring-2 focus:ring-yellow-400">
+                                <option value="16:9">16:9</option>
+                                <option value="4:5">4:5</option>
+                                <option value="9:16">9:16</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- Description Input Textarea -->
+                    <div>
+                        <label class="block text-[11px] font-bold uppercase tracking-wider text-blue-200 mb-1">Task Description</label>
+                        <input type="text" x-model="form.description" placeholder="Enter task heading..." class="w-full bg-white text-gray-900 text-xs px-3 py-2 rounded-lg border border-blue-700 focus:outline-none focus:ring-2 focus:ring-yellow-400 placeholder-gray-400">
+                    </div>
+
+                    <!-- Submit Trigger Button -->
+                    <button type="submit" class="w-full bg-[#00bcd4] hover:bg-[#00acc1] active:scale-95 text-white font-bold uppercase tracking-wider text-xs py-2.5 rounded-lg shadow-md transition-all mt-2 border-b-2 border-cyan-700">
+                        Create Task
+                    </button>
+                </form>
+            </div>
+
+            <!-- Institution Filter -->
+            <div class="bg-gray-950 text-white p-4 rounded-2xl shadow-md space-y-3 border border-gray-800 my-4">
+                <label class="block text-[11px] font-bold uppercase tracking-wider text-gray-400">Filter View by Institution</label>
+                <select id="institutionFilter" class="w-full bg-gray-900 text-white text-xs font-bold px-3 py-2 rounded-lg border border-gray-700 focus:outline-none focus:border-blue-500">
+                    <option value="ALL">Show All Institutions</option>
+                    <option value="MAT">MAT</option>
+                    <option value="MATRIC">MATRIC</option>
+                    <option value="KIND CBE">KIND CBE</option>
+                    <option value="CBSE CBE">CBSE CBE</option>
+                </select>
+            </div>
+
+            <!-- Operations Summary Counters Grid Grid -->
+            <div class="grid grid-cols-2 gap-4">
+                <!-- Need Approval Counter Container -->
+                <div class="bg-white p-4 rounded-2xl border border-gray-200 shadow-sm text-center">
+                    <h4 class="text-xs font-extrabold uppercase tracking-wider text-gray-500 mb-1">Need Approval</h4>
+                    <div class="text-3xl font-black text-white bg-[#ef5350] rounded-xl py-2 shadow-inner" x-text="metrics.needApproval">004</div>
+                </div>
+
+                <!-- Corrections Counter Container -->
+                <div class="bg-white p-4 rounded-2xl border border-gray-200 shadow-sm text-center">
+                    <h4 class="text-xs font-extrabold uppercase tracking-wider text-gray-500 mb-1">Corrections</h4>
+                    <div class="text-3xl font-black text-gray-900 bg-[#ffca28] rounded-xl py-2 shadow-inner" x-text="metrics.corrections">002</div>
+                </div>
+
+                <!-- Approved Counter Container -->
+                <div class="bg-white p-4 rounded-2xl border border-gray-200 shadow-sm text-center">
+                    <h4 class="text-xs font-extrabold uppercase tracking-wider text-gray-500 mb-1">Approved</h4>
+                    <div class="text-3xl font-black text-white bg-[#66bb6a] rounded-xl py-2 shadow-inner" x-text="metrics.approved">010</div>
+                </div>
+
+                <!-- Posted Counter Container -->
+                <div class="bg-white p-4 rounded-2xl border border-gray-200 shadow-sm text-center">
+                    <h4 class="text-xs font-extrabold uppercase tracking-wider text-gray-500 mb-1">Posted</h4>
+                    <div class="text-3xl font-black text-white bg-[#1e3a8a] rounded-xl py-2 shadow-inner" x-text="metrics.posted">005</div>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- ==================== RIGHT COLUMN: 13-STAGE WORKFLOW LIFECYCLE ==================== -->
+        <!-- Note: Showing the active mock lanes side by side on desktop, single stack on mobile -->
+        <div class="lg:col-span-9 grid grid-cols-1 md:grid-cols-2 gap-6 border-4 border-double border-blue-900/30 p-4 rounded-3xl bg-slate-50/50">
+            
+            <!-- LANE 1: NEED APPROVAL WORKSPACE CONTAINER -->
+            <div class="flex flex-col h-[750px] bg-white rounded-2xl shadow-sm border border-red-200 overflow-hidden">
+                <div class="bg-[#ef5350] p-3 text-center border-b border-red-300">
+                    <h3 class="text-md font-black uppercase tracking-widest text-white">Need Approval</h3>
+                </div>
+                
+                <!-- Vertical Scrollable Task Cards Container Workspace -->
+                <div class="p-4 flex-1 overflow-y-auto space-y-4 custom-scrollbar">
+                    <template x-for="task in getTasksByColumn('Need Approval')" :key="task.id">
+                        <div class="bg-white p-4 rounded-xl border border-gray-200 shadow-sm hover:shadow transition space-y-3 relative group" :data-institution="task.institution">
+                            
+                            <!-- Card Decorative Title Pin Anchor -->
+                            <div class="flex justify-between items-center border-b border-gray-50 pb-2">
+                                <span class="text-xs font-black uppercase tracking-wider text-gray-700 flex items-center gap-1">
+                                    📌 <span x-text="task.title"></span>
+                                </span>
+                                <div class="flex gap-2 opacity-60 group-hover:opacity-100 transition">
+                                    <button @click="editTask(task)" class="text-xs text-blue-600 font-bold hover:underline">Edit</button>
+                                    <button @click="deleteTask(task.id)" class="text-xs text-red-500 font-bold hover:underline">Delete</button>
+                                </div>
+                            </div>
+
+                            <!-- Meta Attribute Table Fields Matrix -->
+                            <div class="grid grid-cols-2 gap-y-1.5 text-[11px] bg-slate-50 p-2.5 rounded-lg border border-slate-100 font-medium">
+                                <div class="text-gray-400">🏫 Institution:</div>
+                                <div class="text-blue-900 font-bold text-right" x-text="task.institution"></div>
+                                <div class="text-gray-400">📱 Medium:</div>
+                                <div class="text-purple-600 font-bold text-right" x-text="task.category"></div>
+                                <div class="text-gray-400">📐 Type:</div>
+                                <div class="text-cyan-600 font-bold text-right" x-text="task.aspect"></div>
+                            </div>
+
+                            <!-- Dynamic Timestamps -->
+                            <div class="text-[10px] text-gray-400 space-y-0.5">
+                                <div>📅 Created: <span class="text-gray-600 font-medium" x-text="task.created"></span></div>
+                                <div>🕒 Updated: <span class="text-gray-600 font-medium" x-text="task.updated"></span></div>
+                            </div>
+
+                            <!-- Interactive Actions Pipeline Trigger Section -->
+                            <div class="flex items-center justify-between gap-2 border-t border-gray-100 pt-2.5">
+                                <span class="px-2.5 py-1 text-[11px] font-bold uppercase rounded bg-purple-100 text-purple-700 tracking-wide" x-text="task.assignee"></span>
+                                <div class="flex items-center gap-1.5">
+                                    <span class="text-xs text-gray-400 font-bold font-mono">➜</span>
+                                    <select @change="changeTaskStage(task.id, $event.target.value)" class="bg-yellow-400 hover:bg-yellow-500 text-blue-950 text-[11px] font-black px-2 py-1 rounded focus:outline-none border-b border-yellow-600 cursor-pointer">
+                                        <option value="Need Approval" selected>Approve</option>
+                                        <option value="Corrections">Corrections</option>
+                                        <option value="Approved">Approved</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <!-- Google Drive Direct Vault Attachment Target View Link -->
+                            <a :href="task.driveUrl || '#'" target="_blank" class="w-full flex items-center justify-center gap-2 py-1.5 border border-red-200 hover:border-red-400 rounded-lg bg-red-50/40 text-red-600 text-xs font-bold tracking-wide transition">
+                                View or Download the Content <span class="text-red-500 text-sm">▶️</span>
+                            </a>
+
+                        </div>
+                    </template>
+                </div>
+            </div>
+
+            <!-- LANE 2: CORRECTIONS PIPELINE CONTAINER WORKSPACE -->
+            <div class="flex flex-col h-[750px] bg-white rounded-2xl shadow-sm border border-yellow-300 overflow-hidden">
+                <div class="bg-[#ffca28] p-3 text-center border-b border-yellow-400">
+                    <h3 class="text-md font-black uppercase tracking-widest text-blue-950">Corrections</h3>
+                </div>
+
+                <!-- Vertical Scrollable Task Cards Container Workspace -->
+                <div class="p-4 flex-1 overflow-y-auto space-y-4 custom-scrollbar">
+                    <template x-for="task in getTasksByColumn('Corrections')" :key="task.id">
+                        <div class="bg-white p-4 rounded-xl border border-gray-200 shadow-sm hover:shadow transition space-y-3 relative group" :data-institution="task.institution">
+                            
+                            <!-- Card Heading Context Container -->
+                            <div class="flex justify-between items-center border-b border-gray-50 pb-2">
+                                <span class="text-xs font-black uppercase tracking-wider text-gray-700 flex items-center gap-1">
+                                    📌 <span x-text="task.title"></span>
+                                </span>
+                                <div class="flex gap-2 opacity-60 group-hover:opacity-100 transition">
+                                    <button @click="editTask(task)" class="text-xs text-blue-600 font-bold hover:underline">Edit</button>
+                                    <button @click="deleteTask(task.id)" class="text-xs text-red-500 font-bold hover:underline">Delete</button>
+                                </div>
+                            </div>
+
+                            <!-- Meta Attribute Table Fields Matrix -->
+                            <div class="grid grid-cols-2 gap-y-1.5 text-[11px] bg-slate-50 p-2.5 rounded-lg border border-slate-100 font-medium">
+                                <div class="text-gray-400">🏫 Institution:</div>
+                                <div class="text-red-500 font-bold text-right" x-text="task.institution"></div>
+                                <div class="text-gray-400">📱 Medium:</div>
+                                <div class="text-purple-600 font-bold text-right" x-text="task.category"></div>
+                                <div class="text-gray-400">📐 Type:</div>
+                                <div class="text-cyan-600 font-bold text-right" x-text="task.aspect"></div>
+                            </div>
+
+                            <!-- Timestamps Grid -->
+                            <div class="text-[10px] text-gray-400 space-y-0.5">
+                                <div>📅 Created: <span class="text-gray-600 font-medium" x-text="task.created"></span></div>
+                                <div>🕒 Updated: <span class="text-gray-600 font-medium" x-text="task.updated"></span></div>
+                            </div>
+
+                            <!-- Interactive Actions Pipeline Trigger Section -->
+                            <div class="flex items-center justify-between gap-2 border-t border-gray-100 pt-2.5">
+                                <span class="px-2.5 py-1 text-[11px] font-bold uppercase rounded bg-purple-100 text-purple-700 tracking-wide" x-text="task.assignee"></span>
+                                <div class="flex items-center gap-1.5">
+                                    <span class="text-xs text-gray-400 font-bold font-mono">➜</span>
+                                    <select @change="changeTaskStage(task.id, $event.target.value)" class="bg-yellow-400 hover:bg-yellow-500 text-blue-950 text-[11px] font-black px-2 py-1 rounded focus:outline-none border-b border-yellow-600 cursor-pointer">
+                                        <option value="Corrections" selected>Corrections</option>
+                                        <option value="Need Approval">Need Approval</option>
+                                        <option value="Approved">Approved</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <!-- Correction Notes Logging Form Frame Section -->
+                            <div class="border-t border-gray-100 pt-3 space-y-2 bg-amber-50/50 p-2.5 rounded-lg border border-amber-100/70">
+                                <label class="block text-[10px] font-black uppercase tracking-wider text-amber-700">Correction Notes:</label>
+                                <textarea x-model="task.correctionNote" placeholder="Type correction details here..." class="w-full bg-white text-xs border border-amber-200 rounded p-2 focus:outline-none focus:ring-1 focus:ring-amber-400 resize-none h-14 text-gray-700 shadow-inner font-medium"></textarea>
+                                <button @click="submitCorrectionNotes(task.id, task.correctionNote)" class="w-full bg-[#e65100] hover:bg-[#ef6c00] active:scale-95 text-white font-black uppercase text-[10px] py-1.5 rounded shadow border-b border-orange-900 transition-all tracking-wider">
+                                    Submit Corrections
+                                </button>
+                            </div>
+
+                        </div>
+                    </template>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- Application Core Controller State -->
+    <script>
+        function PrincipalDashboard() {
+            return {
+                // Form Binding Properties
+                form: {
+                    institution: 'MAT',
+                    category: 'YOUTUBE',
+                    channel: '4:5',
+                    aspect: '16:9',
+                    description: ''
+                },
+                // High-Density Metrics State Values
+                metrics: {
+                    needApproval: '004',
+                    corrections: '002',
+                    approved: '010',
+                    posted: '005'
+                },
+                // Mock System Data Collection Structure matching the provided dashboard matrix UI exactly
+                tasks: [
+                    { id: 1, title: 'ANNUAL DAY PROMO', institution: 'MATRIC', category: 'YOUTUBE', aspect: '16:9', created: '20/07/2026, 03:34 pm', updated: '21/07/2026, 05:34 pm', assignee: 'JASON', column: 'Need Approval', driveUrl: '#' },
+                    { id: 2, title: 'KINDERZONE FEAST', institution: 'KIND CBE', category: 'YOUTUBE', aspect: '16:9', created: '10/07/2026, 01:34 pm', updated: '17/07/2026, 12:54 pm', assignee: 'Saravana', column: 'Need Approval', driveUrl: '#' },
+                    { id: 3, title: 'DIWALI CELEBRATION', institution: 'MATRIC', category: 'YOUTUBE', aspect: '16:9', created: '20/07/2026, 03:34 pm', updated: '21/07/2026, 05:34 pm', assignee: 'Mithun', column: 'Need Approval', driveUrl: '#' },
+                    { id: 4, title: 'ALUMNI PAGE', institution: 'CBSE CBE', category: 'WEBSITE', aspect: '16:9', created: '10/07/2026, 01:34 pm', updated: '17/07/2026, 12:54 pm', assignee: 'Shankar', column: 'Need Approval', driveUrl: '#' },
+                    { id: 5, title: 'PONGAL', institution: 'OLA', category: 'META', aspect: '9:16', created: '22/07/2026, 03:34 pm', updated: '24/07/2026, 04:34 pm', assignee: 'Benajmain', column: 'Corrections', correctionNote: 'Need a change the background', driveUrl: '#' },
+                    { id: 6, title: 'SPORTS DAY REEL', institution: 'ORIGAMI', category: 'META', aspect: '9:16', created: '22/07/2026, 03:34 pm', updated: '24/07/2026, 04:34 pm', assignee: 'Benajmain', column: 'Corrections', correctionNote: '', driveUrl: '#' }
+                ],
+                init() {
+                    console.log("Principal High-Density Engine Successfully Armed.");
+                },
+                getTasksByColumn(columnName) {
+                    return this.tasks.filter(t => t.column === columnName);
+                },
+                handleCreateTask() {
+                    if (!this.form.description.trim()) return alert("Please specify a task title details.");
+                    const newId = Date.now();
+                    this.tasks.push({
+                        id: newId,
+                        title: this.form.description.toUpperCase(),
+                        institution: this.form.institution,
+                        category: this.form.category,
+                        aspect: this.form.aspect,
+                        created: new Date().toLocaleString('en-GB'),
+                        updated: new Date().toLocaleString('en-GB'),
+                        assignee: 'FOUNDER',
+                        column: 'Need Approval',
+                        driveUrl: '#'
+                    });
+                    this.form.description = '';
+                },
+                changeTaskStage(id, targetStage) {
+                    const match = this.tasks.find(t => t.id === id);
+                    if (match) match.column = targetStage;
+                },
+                submitCorrectionNotes(id, note) {
+                    alert(`Correction updates applied to card ID [${id}]: "${note}"`);
+                },
+                editTask(task) {
+                    alert(`Editing task details for: ${task.title}`);
+                },
+                deleteTask(id) {
+                    this.tasks = this.tasks.filter(t => t.id !== id);
+                }
+            }
+        }
+        
+    </script>
+
+    <script>
+        document.getElementById('institutionFilter').addEventListener('change', function(e) {
+            const selectedValue = e.target.value;
+            const cards = document.querySelectorAll('[data-institution]');
+            
+            cards.forEach(card => {
+                const matchesFilter = selectedValue === 'ALL' || card.getAttribute('data-institution') === selectedValue;
+                if (matchesFilter) {
+                    card.style.display = '';
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+        });
+    </script>
+    
+</body>
+</html>
