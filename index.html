@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>National Model Group of Schools - Portal</title>
+    
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Alpine.js CDN -->
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+
+    <style>
+        .network-bg {
+            background-color: #ffffff;
+            background-image: radial-gradient(#e5e7eb 1px, transparent 1px), radial-gradient(#e5e7eb 1px, #ffffff 1px);
+            background-size: 40px 40px;
+            background-position: 0 0, 20px 20px;
+        }
+    </style>
+</head>
+<body class="network-bg min-h-screen flex flex-col items-center justify-center px-4 font-sans antialiased select-none">
+
+    <!-- Center Landing Content Card -->
+    <div class="w-full max-w-4xl text-center space-y-10 md:space-y-14 transition-all duration-300">
+        
+        <!-- Typography Branding Header Area -->
+        <div class="space-y-2 md:space-y-3">
+            <h1 class="text-4xl sm:text-5xl md:text-6xl font-extrabold tracking-wide text-[#1e3a8a] uppercase font-serif">
+                National Model
+            </h1>
+            <h2 class="text-2xl sm:text-3xl md:text-4xl font-semibold tracking-wider text-[#2563eb] uppercase">
+                Group of Schools
+            </h2>
+        </div>
+
+        <!-- Fully Mobile Responsive Navigation Controls -->
+        <div class="flex flex-col sm:flex-row items-center justify-center gap-4 md:gap-6 w-full max-w-md sm:max-w-3xl mx-auto px-6">
+            
+            <!-- Founders Route Target Direct Trigger -->
+            <button 
+                onclick="window.location.href='founders.html'"
+                class="w-full sm:w-44 md:w-48 py-3.5 px-6 rounded-lg font-bold text-white bg-[#3b82f6] hover:bg-[#2563eb] active:scale-95 shadow-md shadow-blue-500/20 hover:shadow-lg hover:shadow-blue-500/30 transition-all duration-200 text-center tracking-wide text-lg"
+            >
+                Founders
+            </button>
+
+            <!-- Principal Access Placeholder -->
+            <button 
+                class="w-full sm:w-44 md:w-48 py-3.5 px-6 rounded-lg font-bold text-[#1e3a8a] bg-[#ffc107] hover:bg-[#e0a800] active:scale-95 shadow-md shadow-yellow-500/20 hover:shadow-lg hover:shadow-yellow-500/30 transition-all duration-200 text-center tracking-wide text-lg"
+            >
+                Principal
+            </button>
+
+            <!-- Promo Access Placeholder -->
+            <button 
+                class="w-full sm:w-44 md:w-48 py-3.5 px-6 rounded-lg font-bold text-white bg-[#29b6f6] hover:bg-[#039be5] active:scale-95 shadow-md shadow-sky-400/20 hover:shadow-lg hover:shadow-sky-400/30 transition-all duration-200 text-center tracking-wide text-lg"
+            >
+                PROMO
+            </button>
+            
+        </div>
+    </div>
+
+</body>
+</html>
