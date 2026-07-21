@@ -1,0 +1,509 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>National Model Group - Promo Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap');
+        * { font-family: 'Poppins', sans-serif; box-sizing: border-box; }
+        .scroll-hide::-webkit-scrollbar { display: none; }
+        .scroll-hide { -ms-overflow-style: none; scrollbar-width: none; }
+        .card-shadow { box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
+        .metric-shadow { box-shadow: 0 6px 20px rgba(0,0,0,0.15); }
+        @keyframes pulse-btn { 0%,100% { transform: scale(1); } 50% { transform: scale(1.05); } }
+        .pulse-anim { animation: pulse-btn 0.3s ease; }
+    </style>
+</head>
+<body class="bg-gray-50 min-h-screen">
+
+    <!-- Header -->
+    <header class="bg-white px-6 py-4 shadow-sm flex items-start justify-between">
+        <div>
+            <h1 class="text-3xl font-bold text-gray-900">Welcome</h1>
+            <p id="user-name" class="text-4xl font-extrabold text-blue-700 leading-none">Jason J</p>
+        </div>
+        <div class="text-right">
+            <div class="text-2xl font-extrabold text-blue-800 leading-tight">NATIONAL MODEL</div>
+            <div class="text-xl font-bold text-gray-800">GROUP OF SCHOOLS</div>
+        </div>
+    </header>
+
+    <div class="flex">
+        <!-- Left Sidebar (~1/4 width) -->
+        <aside class="w-1/4 min-w-[280px] bg-white p-4 shadow-sm space-y-4">
+            
+            <!-- Create Task Form -->
+            <div class="bg-blue-800 rounded-lg p-5 metric-shadow">
+                <h2 class="text-center text-xl font-extrabold text-yellow-400 mb-4 flex items-center justify-center gap-2">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"/></svg>
+                    CREATE A TASK
+                </h2>
+                <form id="create-task-form" class="space-y-3">
+                    <div>
+                        <label class="block text-xs font-bold text-yellow-300 mb-1">INSTITUTION</label>
+                        <select id="institution" class="w-full bg-white border-0 rounded px-2 py-1.5 text-sm text-gray-900">
+                            <option>MATRIC</option>
+                            <option>KIND CBE</option>
+                            <option>CBSE CBE</option>
+                        </select>
+                    </div>
+                    <div class="flex gap-2">
+                        <div class="flex-1">
+                            <label class="block text-xs font-bold text-yellow-300 mb-1">POST CATEGORY</label>
+                            <select id="post-category" class="w-full bg-white border-0 rounded px-2 py-1.5 text-sm text-gray-900">
+                                <option>YOUTUBE</option>
+                                <option>META</option>
+                                <option>LINKEDIN</option>
+                            </select>
+                        </div>
+                        <div class="w-1/2">
+                            <label class="block text-xs font-bold text-yellow-300 mb-1">TARGET CHANNEL</label>
+                            <select id="target-channel" class="w-full bg-white border-0 rounded px-2 py-1.5 text-sm text-gray-900">
+                                <option>4:5</option>
+                                <option>16:9</option>
+                                <option>9:16</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-yellow-300 mb-1">CREATIVE ASPECT RATIO</label>
+                        <select id="creative-aspect" class="w-full bg-white border-0 rounded px-2 py-1.5 text-sm text-gray-900">
+                            <option>16:9</option>
+                            <option>9:16</option>
+                            <option>1:1</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-yellow-300 mb-1">TASK DESCRIPTION</label>
+                        <textarea id="task-description" rows="3" placeholder="Enter task heading..." class="w-full bg-white border-0 rounded px-2 py-1.5 text-sm text-gray-900 placeholder-gray-500 resize-none"></textarea>
+                    </div>
+                    <button type="submit" class="w-full bg-cyan-400 hover:bg-cyan-500 text-gray-900 font-bold text-sm py-2 rounded shadow-lg transition-colors">CREATE TASK</button>
+                </form>
+            </div>
+
+            <!-- Metric Counter Boxes (2x2 Grid) -->
+            <div class="grid grid-cols-2 gap-3">
+                <div class="bg-red-500 rounded-lg p-3 metric-shadow text-center">
+                    <p class="text-xs font-bold text-white uppercase tracking-wide">NEED APPROVAL</p>
+                    <p id="count-doing" class="text-4xl font-extrabold text-white mt-1">004</p>
+                </div>
+                <div class="bg-yellow-400 rounded-lg p-3 metric-shadow text-center">
+                    <p class="text-xs font-bold text-gray-800 uppercase tracking-wide">CORRECTIONS</p>
+                    <p id="count-corrections" class="text-4xl font-extrabold text-gray-900 mt-1">002</p>
+                </div>
+                <div class="bg-green-500 rounded-lg p-3 metric-shadow text-center">
+                    <p class="text-xs font-bold text-white uppercase tracking-wide">APPROVED</p>
+                    <p id="count-approved" class="text-4xl font-extrabold text-white mt-1">010</p>
+                </div>
+                <div class="bg-blue-800 rounded-lg p-3 metric-shadow text-center">
+                    <p class="text-xs font-bold text-yellow-300 uppercase tracking-wide">POSTED</p>
+                    <p id="count-posted" class="text-4xl font-extrabold text-white mt-1">005</p>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Content: Five-Column Pipeline -->
+        <main class="flex-1 p-4 overflow-x-auto">
+            <div class="flex gap-4 min-w-max h-[calc(100vh-100px)]">
+                
+                <!-- Column 1: DOING -->
+                <div class="w-[320px] flex flex-col">
+                    <div class="bg-teal-600 text-white px-4 py-2.5 rounded-t-lg text-center font-bold text-sm">DOING</div>
+                    <div id="col-doing" class="flex-1 bg-gray-200 rounded-b-lg p-3 space-y-3 overflow-y-auto scroll-hide">
+                    </div>
+                </div>
+
+                <!-- Column 2: CORRECTIONS -->
+                <div class="w-[320px] flex flex-col">
+                    <div class="bg-orange-500 text-white px-4 py-2.5 rounded-t-lg text-center font-bold text-sm">CORRECTIONS</div>
+                    <div id="col-corrections" class="flex-1 bg-gray-200 rounded-b-lg p-3 space-y-3 overflow-y-auto scroll-hide">
+                    </div>
+                </div>
+
+                <!-- Column 3: SEND FOR APPROVAL -->
+                <div class="w-[320px] flex flex-col">
+                    <div class="bg-purple-700 text-white px-4 py-2.5 rounded-t-lg text-center font-bold text-sm">SEND FOR APPROVAL</div>
+                    <div id="col-approval" class="flex-1 bg-gray-200 rounded-b-lg p-3 space-y-3 overflow-y-auto scroll-hide">
+                    </div>
+                </div>
+
+                <!-- Column 4: SEND FOR POST -->
+                <div class="w-[320px] flex flex-col">
+                    <div class="bg-red-600 text-white px-4 py-2.5 rounded-t-lg text-center font-bold text-sm">SEND FOR POST</div>
+                    <div id="col-post" class="flex-1 bg-gray-200 rounded-b-lg p-3 space-y-3 overflow-y-auto scroll-hide">
+                    </div>
+                </div>
+
+                <!-- Column 5: POSTED / COMPLETED -->
+                <div class="w-[320px] flex flex-col">
+                    <div class="bg-blue-900 text-white px-4 py-2.5 rounded-t-lg text-center font-bold text-sm">POSTED / COMPLETED</div>
+                    <div id="col-posted" class="flex-1 bg-gray-200 rounded-b-lg p-3 space-y-3 overflow-y-auto scroll-hide">
+                    </div>
+                </div>
+
+            </div>
+        </main>
+    </div>
+
+    <!-- Live Production Dashboard Floating Button -->
+    <button onclick="window.location.href='dashboard.html?source=promo'" class="fixed bottom-6 right-6 bg-yellow-400 hover:bg-yellow-500 text-gray-900 font-bold text-xs px-5 py-3 rounded-full shadow-xl z-50 transition-all hover:scale-105 active:scale-95 flex items-center gap-2">
+        <span>⚡</span> LIVE PRODUCTION DASHBOARD
+    </button>
+
+    <script>
+        // Get current user from URL or default
+        const urlParams = new URLSearchParams(window.location.search);
+        const currentUser = urlParams.get('user') || 'Jason';
+        const fullUser = currentUser === 'Jason' ? 'Jason J' : (currentUser + ' J');
+
+        document.getElementById('user-name').textContent = fullUser;
+
+        // Initial task data
+        let tasks = [
+            {
+                id: 1, title: 'Trail 3', institution: 'MATRIC', medium: 'EMAIL', type: 'JOB',
+                postCategory: 'YOUTUBE', targetChannel: '4:5', creativeAspect: '16:9',
+                description: 'Design festive campaign banner for matric school newsletter',
+                assignee: 'Jason', createdAt: '21/07/2026, 08:51:am', updatedAt: '21/07/2026, 08:51:am',
+                status: 'doing', correctionNotes: '', linkedFile: '', approverName: ''
+            },
+            {
+                id: 2, title: 'Trail task', institution: 'CBSE CBE', medium: 'FB', type: 'JOB',
+                postCategory: 'META', targetChannel: '1:1', creativeAspect: '9:16',
+                description: 'Create CBSE day celebration social media highlights reel',
+                assignee: 'Jason', createdAt: '21/07/2026, 08:51:am', updatedAt: '21/07/2026, 08:51:am',
+                status: 'corrections', correctionNotes: 'Fix logo placement in top-left corner. Ensure brand colors match guidelines.', linkedFile: 'D:Jason_Work_Files\\2026-2027\\Matric\\Challenger_Creates\\email_footer_CSB.png', approverName: ''
+            },
+            {
+                id: 3, title: 'Trail task 2', institution: 'KIND CBE', medium: 'YS', type: 'JOB',
+                postCategory: 'YOUTUBE', targetChannel: '16:9', creativeAspect: '16:9',
+                description: 'Kindergarden CBE - Morning assembly highlight video thumbnail',
+                assignee: 'Jason', createdAt: '21/07/2026, 08:49:am', updatedAt: '21/07/2026, 08:49:am',
+                status: 'approval', correctionNotes: '', linkedFile: 'D:Jason_Work_Files\\2026-2027\\Kind_CBE\\competency_based_day.png', approverName: ''
+            },
+            {
+                id: 4, title: 'Trail task', institution: 'MATRIC', medium: 'FB', type: 'POST',
+                postCategory: 'META', targetChannel: '4:5', creativeAspect: '1:1',
+                description: 'Matric sports day competition results - Post for Facebook tab',
+                assignee: 'Saravana', createdAt: '21/07/2026, 08:51:am', updatedAt: '21/07/2026, 08:51:am',
+                status: 'post', correctionNotes: '', linkedFile: 'D:Jason_Work_Files\\2026-2027\\Matric\\Sports_day.png', approverName: ''
+            }
+        ];
+
+        const defaultTasksTemplate = [
+            { id: 1, title: 'Trail 3', institution: 'MATRIC', medium: 'EMAIL', type: 'JOB',
+              postCategory: 'YOUTUBE', targetChannel: '4:5', creativeAspect: '16:9',
+              description: 'Design festive campaign banner for matric school newsletter',
+              assignee: 'Jason', createdAt: '21/07/2026, 08:51:am', updatedAt: '21/07/2026, 08:51:am',
+              status: 'doing', correctionNotes: '', linkedFile: '', approverName: '' },
+            { id: 2, title: 'Trail task', institution: 'CBSE CBE', medium: 'FB', type: 'JOB',
+              postCategory: 'META', targetChannel: '1:1', creativeAspect: '9:16',
+              description: 'Create CBSE day celebration social media highlights reel',
+              assignee: 'Jason', createdAt: '21/07/2026, 08:51:am', updatedAt: '21/07/2026, 08:51:am',
+              status: 'corrections', correctionNotes: 'Fix logo placement in top. Ensure brand colors.',
+              linkedFile: 'Competency_day.png', approverName: '' },
+            { id: 3, title: 'Trail task 2', institution: 'KIND CBE', medium: 'YS', type: 'JOB',
+              postCategory: 'YOUTUBE', targetChannel: '16:9', creativeAspect: '16:9',
+              description: 'Kindergarden CBE - Morning assembly highlight video thumbnail',
+              assignee: 'Jason', createdAt: '21/07/2026, 08:49:am', updatedAt: '21/07/2026, 08:49:am',
+              status: 'approval', correctionNotes: '', linkedFile: 'competency_based_day.png', approverName: '' },
+            { id: 4, title: 'Trail task', institution: 'MATRIC', medium: 'FB', type: 'POST',
+              postCategory: 'META', targetChannel: '4:5', creativeAspect: '1:1',
+              description: 'Matric sports day competition results - Post for Facebook',
+              assignee: 'Jason', createdAt: '21/07/2026, 08:51:am', updatedAt: '21/07/2026, 08:51:am',
+              status: 'post', correctionNotes: '', linkedFile: 'sports_final_1day.png', approverName: '' }
+        ];
+
+        function getTasksForUser() {
+            const userPosts = localStorage.getItem('promo_tasks_' + currentUser);
+            if (userPosts) { tasks = JSON.parse(userPosts); }
+            else { tasks = JSON.parse(JSON.stringify(defaultTasksTemplate)); }
+        }
+
+        function saveTasks() {
+            localStorage.setItem('promo_tasks_' + currentUser, JSON.stringify(tasks));
+        }
+
+        function padNum(n) { return String(n).padStart(3, '0'); }
+
+        function updateCounters() {
+            const userTasks = tasks.filter(t => t.assignee === currentUser);
+            const doing = userTasks.filter(t => t.status === 'doing').length;
+            const corrections = userTasks.filter(t => t.status === 'corrections').length;
+            const approved = userTasks.filter(t => t.status === 'approval').length;
+            const posted = userTasks.filter(t => t.status === 'posted').length;
+            const postP = userTasks.filter(t => t.status === 'post').length;
+            document.getElementById('count-doing').textContent = padNum(doing);
+            document.getElementById('count-corrections').textContent = padNum(corrections);
+            document.getElementById('count-approved').textContent = padNum(approved);
+            document.getElementById('count-posted').textContent = padNum(posted + postP + 5);
+        }
+
+        function createCard(task) {
+            const card = document.createElement('div');
+            card.className = 'bg-white rounded-lg p-3 card-shadow text-xs';
+            card.setAttribute('data-id', task.id);
+
+            const medColors = { EMAIL: 'bg-blue-600', FB: 'bg-indigo-600', YS: 'bg-red-600', YOUTUBE: 'bg-red-700', META: 'bg-blue-700', LINKEDIN: 'bg-blue-600' };
+            const medColor = medColors[task.medium] || 'bg-blue-700';
+
+            let additionalLinks = '';
+            if (task.status === 'doing') {
+                additionalLinks = `
+                    <div class="mt-2">
+                        <label class="text-[10px] font-bold text-gray-600 uppercase">Stage:</label>
+                        <select onchange="moveTask(${task.id}, this.value)" class="w-full bg-gray-100 border-0 rounded px-1 py-1 text-[10px] text-gray-700 mt-0.5">
+                            <option value="doing" ${task.status==='doing'?'selected':''}>Doing</option>
+                            <option value="corrections">Corrections</option>
+                            <option value="approval">Send for Approval</option>
+                            <option value="post">Send for Post</option>
+                        </select>
+                    </div>`;
+            }
+
+            if (task.status === 'corrections') {
+                additionalLinks = `
+                    <div class="mt-2">
+                        <label class="text-[10px] font-bold text-gray-600 uppercase">Choose File:</label>
+                        <input type="file" onchange="updateLinkedFile(${task.id}, this)" class="text-[10px] w-full mt-0.5"/>
+                    </div>
+                    <div class="mt-1.5">
+                        <p class="text-[10px] text-gray-500 truncate" title="${task.linkedFile}">
+                            <span class="text-blue-600 font-medium">Linked File:</span> ${task.linkedFile || 'No file'}
+                        </p>
+                        <div class="flex gap-1 mt-1">
+                            <button onclick="openFolder(${task.id})" class="bg-green-100 text-green-800 px-2 py-1 rounded text-[9px] font-bold hover:bg-green-200 transition">Open Folder</button>
+                            <button onclick="playFile(${task.id})" class="bg-yellow-100 text-yellow-800 px-2 py-1 rounded text-[9px] font-bold hover:bg-yellow-200 transition">Play File</button>
+                        </div>
+                    </div>
+                    <div class="mt-2">
+                        <label class="text-[10px] font-bold text-gray-600 uppercase">Correction Notes:</label>
+                        <textarea onchange="updateCorrectionNotes(${task.id}, this.value)" rows="3" class="w-full bg-gray-50 border border-gray-200 rounded px-2 py-1 text-[10px] resize-none mt-0.5 text-gray-700">${task.correctionNotes}</textarea>
+                    </div>
+                    <button onclick="submitCorrections(${task.id})" class="mt-2 w-full bg-orange-500 hover:bg-orange-600 text-white font-bold text-[10px] py-1.5 rounded transition-colors">Submit Corrections</button>`;
+            }
+
+            if (task.status === 'approval') {
+                additionalLinks = `
+                    <div class="mt-2">
+                        <label class="text-[10px] font-bold text-gray-600 uppercase">Choose File:</label>
+                        <input type="file" class="text-[10px] w-full mt-0.5"/>
+                    </div>
+                    <div class="mt-1.5">
+                        <p class="text-[10px] text-gray-500 truncate" title="${task.linkedFile}">
+                            <span class="text-blue-600 font-medium">Linked File:</span> ${task.linkedFile || 'No file'}
+                        </p>
+                    </div>
+                    <div class="mt-2">
+                        <label class="text-[10px] font-bold text-gray-600 uppercase">Approver Name:</label>
+                        <input type="text" id="approver-input-${task.id}" value="${task.approverName}" class="w-full bg-gray-100 border-0 rounded px-2 py-1 text-[10px] text-gray-800 mt-0.5" placeholder="Enter approver name"/>
+                    </div>
+                    <button onclick="confirmApprover(${task.id})" class="mt-2 w-full bg-purple-600 hover:bg-purple-700 text-white font-bold text-[10px] py-1.5 rounded transition-colors">Confirm Approver</button>`;
+            }
+
+            if (task.status === 'post') {
+                additionalLinks = `
+                    <div class="mt-1.5">
+                        <p class="text-[10px] text-gray-500 truncate" title="${task.linkedFile}">
+                            <span class="text-blue-600 font-medium">Linked File:</span> ${task.linkedFile || 'No file'}
+                        </p>
+                    </div>
+                    <div class="mt-2 space-y-1.5">
+                        <div>
+                            <label class="text-[10px] font-bold text-gray-600 uppercase">Target Meta:</label>
+                            <div class="bg-gray-100 rounded px-2 py-1 mt-0.5 text-[10px] text-gray-700">
+                                <p><span class="font-medium">Category:</span> ${task.postCategory}</p>
+                                <p><span class="font-medium">Channel:</span> ${task.targetChannel}</p>
+                                <p><span class="font-medium">Aspect:</span> ${task.creativeAspect}</p>
+                                <p><span class="font-medium">Institution:</span> ${task.institution}</p>
+                            </div>
+                        </div>
+                        <div>
+                            <label class="text-[10px] font-bold text-gray-600 uppercase">Attachment:</label>
+                            <div class="bg-gray-50 rounded border border-gray-200 px-2 py-1 mt-0.5 text-[10px] text-blue-600 truncate">
+                                📎 ${task.linkedFile || 'Post_Creative.png'}
+                            </div>
+                        </div>
+                    </div>
+                    <button onclick="sendForPost(${task.id})" class="mt-2 w-full bg-red-500 hover:bg-red-600 text-white font-bold text-[10px] py-1.5 rounded transition-colors">Send for Post</button>`;
+            }
+
+            if (task.status === 'posted') {
+                additionalLinks = `
+                    <div class="mt-2 p-2 bg-green-50 rounded text-[10px] text-green-700 text-center font-medium">
+                        ✓ This task has been posted
+                    </div>`;
+            }
+
+            card.innerHTML = `
+                <div class="flex items-start justify-between mb-2">
+                    <div class="flex items-center gap-1.5">
+                        <div class="w-2 h-2 ${medColor} rounded-full flex-shrink-0 mt-0.5"></div>
+                        <h3 class="text-xs font-bold text-gray-900 leading-tight">${task.title}</h3>
+                    </div>
+                    <span class="text-[9px] text-gray-400 font-medium">${task.id}</span>
+                </div>
+                <div class="space-y-1 mb-2">
+                    <p class="text-[10px] text-gray-600">
+                        <span class="text-[9px] text-gray-400">Institution:</span> 
+                        <span class="font-semibold text-gray-800">${task.institution}</span>
+                    </p>
+                    <p class="text-[10px] text-gray-600">
+                        <span class="text-[9px] text-gray-400">Medium:</span> 
+                        <span class="px-1.5 ${medColor} text-white rounded text-[9px] font-semibold">${task.medium}</span>
+                    </p>
+                    <p class="text-[10px] text-gray-600">
+                        <span class="text-[9px] text-gray-400">Type:</span> 
+                        <span class="font-medium text-gray-700">${task.type}</span>
+                    </p>
+                </div>
+                <div class="grid grid-cols-2 gap-1 text-[9px] text-gray-500">
+                    <p><span class="text-[8px] text-gray-400">Created:</span> ${task.createdAt}</p>
+                    <p><span class="text-[8px] text-gray-400">Updated:</span> ${task.updatedAt}</p>
+                </div>
+                ${additionalLinks}
+                <div class="flex gap-1.5 mt-2 pt-2 border-t border-gray-200">
+                    <button onclick="editTask(${task.id})" class="flex-1 bg-gray-100 hover:bg-gray-200 text-gray-700 text-[9px] font-medium py-1 rounded transition-colors flex items-center justify-center gap-0.5">
+                        <svg class="w-2.5 h-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h9a2 2 0 002-2v-1m4.66-12.66l-6.34 6.34"/></svg>
+                        Edit
+                    </button>
+                    <button onclick="deleteTask(${task.id})" class="flex-1 bg-gray-100 hover:bg-red-50 text-gray-700 hover:text-red-600 text-[9px] font-medium py-1 rounded transition-colors flex items-center justify-center gap-0.5">
+                        <svg class="w-2.5 h-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
+                        Delete
+                    </button>
+                </div>
+            `;
+
+            return card;
+        }
+
+        function renderAllColumns() {
+            const cols = { doing: document.getElementById('col-doing'), corrections: document.getElementById('col-corrections'), approval: document.getElementById('col-approval'), post: document.getElementById('col-post'), posted: document.getElementById('col-posted') };
+            Object.values(cols).forEach(c => { if (c) c.innerHTML = ''; });
+            const userTasks = tasks.filter(t => t.assignee === currentUser);
+            userTasks.forEach(task => {
+                const colMap = { doing: 'doing', corrections: 'corrections', approval: 'approval', post: 'post', posted: 'posted' };
+                const target = colMap[task.status] || 'doing';
+                if (cols[target]) { cols[target].appendChild(createCard(task)); }
+            });
+            updateCounters();
+        }
+
+        function moveTask(id, newStatus) {
+            const task = tasks.find(t => t.id === id);
+            if (!task) return;
+            task.status = newStatus;
+            task.updatedAt = new Date().toLocaleString('en-US', { day:'2-digit', month:'2-digit', year:'numeric', hour:'2-digit', minute:'2-digit', hour12:true }).replace(',', '').replace(' AM', 'am').replace(' PM', 'pm').trim();
+            saveTasks();
+            renderAllColumns();
+            if (newStatus === 'corrections') { document.getElementById('col-corrections').lastElementChild?.scrollIntoView({ behavior: 'smooth' }); }
+            if (newStatus === 'posted') { document.getElementById('col-posted').lastElementChild?.scrollIntoView({ behavior: 'smooth' }); }
+        }
+
+        function updateLinkedFile(id, input) {
+            const task = tasks.find(t => t.id === id);
+            if (task && input.files && input.files[0]) { task.linkedFile = input.files[0].name; saveTasks(); renderAllColumns(); }
+        }
+
+        function updateCorrectionNotes(id, notes) {
+            const task = tasks.find(t => t.id === id);
+            if (task) { task.correctionNotes = notes; saveTasks(); }
+        }
+
+        function submitCorrections(id) {
+            const task = tasks.find(t => t.id === id);
+            if (!task) return;
+            if (!task.linkedFile) { alert('⚠️ Please attach a file before submitting corrections.'); return; }
+            if (!task.correctionNotes.trim()) { alert('📝 Please add correction notes before submitting.'); return; }
+            moveTask(id, 'approval');
+            alert('✅ Corrections submitted successfully and sent for approval.');
+        }
+
+        function confirmApprover(id) {
+            const input = document.getElementById('approver-input-' + id);
+            if (!input || !input.value.trim()) { alert('👤 Please enter the approver name.'); return; }
+            const task = tasks.find(t => t.id === id);
+            if (task) { task.approverName = input.value.trim(); }
+            moveTask(id, 'post');
+            alert('✅ Task approved and sent for posting. Assigned to approver: ' + (task ? task.approverName : ''));
+        }
+
+        function sendForPost(id) {
+            const task = tasks.find(t => t.id === id);
+            if (!task) return;
+            if (!task.linkedFile) { alert('⚠️ Please have a file attached before sending to post.'); return; }
+            moveTask(id, 'posted');
+            alert('🎉 Task sent for posting successfully! Stage: Posted/Completed.');
+        }
+
+        function openFolder(id) { alert('📂 Opening folder for task ' + id + '...'); }
+        function playFile(id) { alert('▶️ Playing media file for task ' + id + '...'); }
+
+        function editTask(id) {
+            const task = tasks.find(t => t.id === id);
+            if (!task) return;
+            const editData = prompt('✏️ Edit Task (enter "field:value" per line):\n\nExample:\nTitle:New Title\nInstitution:MATRIC\nDescription:New description',
+                `Title:${task.title}\nInstitution:${task.institution}\nMedium:${task.medium}\nType:${task.type}\nDescription:${task.description}`);
+            if (!editData) return;
+            editData.trim().split('\n').forEach(line => {
+                const [key, val] = line.split(':');
+                if (key && val !== undefined) {
+                    const k = key.toLowerCase().trim();
+                    if (['title','institution','medium','type','description'].includes(k)) {
+                        if (k === 'title') task.title = val.trim() || task.title;
+                        else if (k === 'institution') task.institution = val.trim();
+                        else if (k === 'medium') task.medium = val.trim();
+                        else if (k === 'type') task.type = val.trim();
+                        else if (k === 'description') task.description = val.trim();
+                    }
+                }
+            });
+            task.updatedAt = new Date().toLocaleString('en-US', { day:'2-digit', month:'2-digit', year:'numeric', hour:'2-digit', minute:'2-digit', hour12:true }).replace(',', '').replace(' AM', 'am').replace(' PM', 'pm').trim();
+            saveTasks(); renderAllColumns();
+            alert('✏️ Task updated successfully!');
+        }
+
+        function deleteTask(id) {
+            if (confirm('❌ Are you sure you want to delete this task?')) {
+                tasks = tasks.filter(t => t.id !== id);
+                saveTasks(); renderAllColumns();
+                alert('🗑️ Task deleted successfully.');
+            }
+        }
+
+        document.getElementById('create-task-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const institution = document.getElementById('institution').value;
+            const postCategory = document.getElementById('post-category').value;
+            const targetChannel = document.getElementById('target-channel').value;
+            const creativeAspect = document.getElementById('creative-aspect').value;
+            const description = document.getElementById('task-description').value.trim();
+            if (!description) { alert('Please enter a task description.'); return; }
+            const now = new Date();
+            const dateStr = now.toLocaleString('en-US', { day:'2-digit', month:'2-digit', year:'numeric', hour:'2-digit', minute:'2-digit', hour12:true }).replace(',', '').replace(' AM', 'am').replace(' PM', 'pm').trim();
+            const newTask = {
+                id: tasks.length > 0 ? Math.max(...tasks.map(t => t.id)) + 1 : 1,
+                title: description.substring(0, 30) + (description.length > 30 ? '...' : ''),
+                institution, medium: postCategory, type: 'JOB',
+                postCategory, targetChannel, creativeAspect,
+                description, assignee: currentUser,
+                createdAt: dateStr, updatedAt: dateStr,
+                status: 'doing', correctionNotes: '', linkedFile: '', approverName: ''
+            };
+            tasks.push(newTask);
+            saveTasks();
+            renderAllColumns();
+            document.getElementById('task-description').value = '';
+            document.getElementById('col-doing').lastElementChild?.scrollIntoView({ behavior: 'smooth' });
+        });
+
+        // Initialize
+        (function init() {
+            getTasksForUser();
+            renderAllColumns();
+        })();
+    </script>
+</body>
+</html>

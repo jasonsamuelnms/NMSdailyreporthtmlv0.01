@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Live Production Lifecycle Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap');
+        * { font-family: 'Poppins', sans-serif; box-sizing: border-box; }
+        .scrollbar-thin::-webkit-scrollbar { width: 8px; height: 8px; }
+        .scrollbar-thin::-webkit-scrollbar-track { background: #f1f5f9; border-radius: 4px; }
+        .scrollbar-thin::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+        .scrollbar-thin::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+    </style>
+</head>
+<body class="bg-gray-100 min-h-screen">
+
+    <!-- Dashboard Header -->
+    <header class="bg-white shadow-sm border-b border-gray-200 px-6 py-4">
+        <div class="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4">
+            <div>
+                <h1 class="text-3xl md:text-4xl font-black text-[#1e3a8a] uppercase tracking-tight flex items-center gap-3">
+                    <span class="text-4xl">📋</span> Live Production Lifecycle Dashboard
+                </h1>
+                <p class="text-xs font-bold text-gray-500 uppercase tracking-widest mt-1 ml-12">Real-Time Operations Metrics & Data Integrity Engine</p>
+            </div>
+            <div class="flex gap-3">
+                <button onclick="downloadCSV()" class="bg-green-600 hover:bg-green-700 text-white font-bold text-xs px-6 py-2.5 rounded-lg shadow-md transition-all flex items-center gap-2">
+                    <span>📥</span> Download CSV Backup
+                </button>
+                <button onclick="window.close()" class="bg-yellow-400 hover:bg-yellow-500 text-gray-900 font-bold text-xs px-6 py-2.5 rounded-lg shadow-md transition-all flex items-center gap-2">
+                    <span>✕</span> Close System Dashboard
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Controls Bar -->
+    <div class="bg-white border-b border-gray-200 px-6 py-4">
+        <div class="flex flex-col md:flex-row gap-4 items-center justify-between">
+            <div class="flex-1 w-full md:max-w-2xl">
+                <label class="block text-xs font-bold text-gray-600 uppercase tracking-wider mb-1">🔍 Search Projects:</label>
+                <input type="text" id="searchInput" placeholder="Search by Title, Institution, Medium, Path or Approver..." 
+                    class="w-full bg-white border-2 border-gray-300 rounded-lg px-4 py-2 text-sm focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all"
+                    oninput="filterTasks()">
+            </div>
+            <div class="flex gap-3 items-end">
+                <div>
+                    <label class="block text-xs font-bold text-gray-600 uppercase tracking-wider mb-1">📊 Sort By:</label>
+                    <select id="sortBy" onchange="renderDashboard()" class="bg-white border-2 border-gray-300 rounded-lg px-3 py-2 text-xs font-bold focus:outline-none focus:border-blue-500">
+                        <option value="id">ID</option>
+                        <option value="title">Title</option>
+                        <option value="institution">Institution</option>
+                        <option value="created">Creation Date</option>
+                        <option value="updated">Updated Date</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-gray-600 uppercase tracking-wider mb-1">📈 Order:</label>
+                    <select id="sortOrder" onchange="renderDashboard()" class="bg-white border-2 border-gray-300 rounded-lg px-3 py-2 text-xs font-bold focus:outline-none focus:border-blue-500">
+                        <option value="asc">Ascending</option>
+                        <option value="desc">Descending</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Dashboard Table -->
+    <main class="p-6">
+        <div class="bg-white rounded-xl shadow-lg border-2 border-gray-800 overflow-hidden">
+            <div class="bg-gradient-to-r from-blue-900 to-blue-800 px-4 py-2 flex items-center justify-between">
+                <span class="text-xs font-bold text-white uppercase tracking-wider">
+                    📊 Showing data from: <span class="text-yellow-300" id="sourceLabel">Promo Team</span> Dashboard
+                </span>
+                <span class="text-xs text-blue-200" id="taskCount">0 records</span>
+            </div>
+            <div class="overflow-x-auto">
+                <table class="w-full border-collapse">
+                    <thead>
+                        <tr class="bg-[#1e3a8a] text-white">
+                            <th class="text-left px-4 py-3 text-xs font-black uppercase tracking-wider border-r border-blue-800 w-1/4">Project Name & Info</th>
+                            <th class="text-center px-4 py-3 text-xs font-black uppercase tracking-wider border-r border-blue-800 w-1/6">Lifecycle Status</th>
+                            <th class="text-left px-4 py-3 text-xs font-black uppercase tracking-wider border-r border-blue-800 w-1/6">File Revision Specs</th>
+                            <th class="text-left px-4 py-3 text-xs font-black uppercase tracking-wider border-r border-blue-800 w-1/6">Final Approver</th>
+                            <th class="text-left px-4 py-3 text-xs font-black uppercase tracking-wider w-1/4">Revision History Logs</th>
+                        </tr>
+                    </thead>
+                    <tbody id="dashboardBody">
+                        <!-- Dynamic rows will be inserted here -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        // Source configuration for each dashboard
+        const sourceConfig = {
+            'promo': { keys: ['promo_tasks_Jason', 'promo_tasks_Saravana', 'promo_tasks_Benajmain'], name: 'Promo Team' },
+            'principal': { keys: ['principal_tasks'], name: 'Principal' },
+            'founders': { keys: ['founders_tasks'], name: 'Founders' }
+        };
+
+        // Detect source page from URL parameters or referrer
+        function getCurrentSource() {
+            const params = new URLSearchParams(window.location.search);
+            const source = params.get('source');
+            if (source && sourceConfig[source]) return source;
+            
+            const referrer = document.referrer;
+            if (referrer.includes('promo.html')) return 'promo';
+            if (referrer.includes('principal.html')) return 'principal';
+            if (referrer.includes('founders.html')) return 'founders';
+            
+            return 'promo'; // default
+        }
+
+        const currentSource = getCurrentSource();
+        const currentSourceConfig = sourceConfig[currentSource] || sourceConfig['promo'];
+
+        // Load tasks from localStorage (aggregated from all sources)
+        function loadAllTasks() {
+            const allTasks = [];
+            
+            // Load tasks only from the current source
+            currentSourceConfig.keys.forEach(key => {
+                try {
+                    const data = localStorage.getItem(key);
+                    if (data) {
+                        const tasks = JSON.parse(data);
+                        tasks.forEach(task => {
+                            if (!allTasks.find(t => t.id === task.id)) {
+                                allTasks.push(task);
+                            }
+                        });
+                    }
+                } catch (e) {
+                    console.error('Error loading tasks from', key, e);
+                }
+            });
+
+            // Add default tasks if none found
+            if (allTasks.length === 0) {
+                return getDefaultTasksForSource(currentSource);
+            }
+            return allTasks;
+        }
+
+        function getDefaultTasksForSource(source) {
+            if (source === 'promo') {
+                return [
+                    { id: 1, title: 'ANNUAL DAY PROMO', institution: 'MATRIC', medium: 'YOUTUBE', created: '20/07/2026, 03:34 pm', updated: '21/07/2026, 05:34 pm', assignee: 'JASON', status: 'doing', correctionRounds: 0, approver: '', logs: [], source: 'promo' },
+                    { id: 2, title: 'KINDERZONE FEAST', institution: 'KIND CBE', medium: 'YOUTUBE', created: '10/07/2026, 01:34 pm', updated: '17/07/2026, 12:54 pm', assignee: 'Saravana', status: 'doing', correctionRounds: 0, approver: '', logs: [], source: 'promo' },
+                    { id: 3, title: 'DIWALI CELEBRATION', institution: 'MATRIC', medium: 'YOUTUBE', created: '20/07/2026, 03:34 pm', updated: '21/07/2026, 05:34 pm', assignee: 'Mithun', status: 'approval', correctionRounds: 0, approver: '', logs: [], source: 'promo' },
+                    { id: 4, title: 'ALUMNI PAGE', institution: 'CBSE CBE', medium: 'WEBSITE', created: '10/07/2026, 01:34 pm', updated: '17/07/2026, 12:54 pm', assignee: 'Shankar', status: 'doing', correctionRounds: 0, approver: '', logs: [], source: 'promo' },
+                    { id: 5, title: 'PONGAL', institution: 'OLA', medium: 'META', created: '22/07/2026, 03:34 pm', updated: '24/07/2026, 04:34 pm', assignee: 'Benajmain', status: 'corrections', correctionRounds: 1, approver: '', logs: ['Status changed to CORRECTIONS [21/07/2026, 09:51 am]'], source: 'promo' },
+                    { id: 6, title: 'SPORTS DAY REEL', institution: 'ORIGAMI', medium: 'META', created: '22/07/2026, 03:34 pm', updated: '24/07/2026, 04:34 pm', assignee: 'Benajmain', status: 'corrections', correctionRounds: 0, approver: '', logs: [], source: 'promo' }
+                ];
+            } else if (source === 'principal') {
+                return [
+                    { id: 1, title: 'ANNUAL DAY PROMO', institution: 'MATRIC', medium: 'YOUTUBE', created: '20/07/2026, 03:34 pm', updated: '21/07/2026, 05:34 pm', assignee: 'JASON', status: 'Need Approval', correctionRounds: 0, approver: '', logs: [], source: 'principal' },
+                    { id: 2, title: 'KINDERZONE FEAST', institution: 'KIND CBE', medium: 'YOUTUBE', created: '10/07/2026, 01:34 pm', updated: '17/07/2026, 12:54 pm', assignee: 'Saravana', status: 'Need Approval', correctionRounds: 0, approver: '', logs: [], source: 'principal' },
+                    { id: 3, title: 'DIWALI CELEBRATION', institution: 'MATRIC', medium: 'YOUTUBE', created: '20/07/2026, 03:34 pm', updated: '21/07/2026, 05:34 pm', assignee: 'Mithun', status: 'Need Approval', correctionRounds: 0, approver: '', logs: [], source: 'principal' },
+                    { id: 4, title: 'ALUMNI PAGE', institution: 'CBSE CBE', medium: 'WEBSITE', created: '10/07/2026, 01:34 pm', updated: '17/07/2026, 12:54 pm', assignee: 'Shankar', status: 'Need Approval', correctionRounds: 0, approver: '', logs: [], source: 'principal' },
+                    { id: 5, title: 'PONGAL', institution: 'OLA', medium: 'META', created: '22/07/2026, 03:34 pm', updated: '24/07/2026, 04:34 pm', assignee: 'Benajmain', status: 'Corrections', correctionRounds: 1, approver: '', logs: ['Status changed to CORRECTIONS [21/07/2026, 09:51 am]'], source: 'principal' },
+                    { id: 6, title: 'SPORTS DAY REEL', institution: 'ORIGAMI', medium: 'META', created: '22/07/2026, 03:34 pm', updated: '24/07/2026, 04:34 pm', assignee: 'Benajmain', status: 'Corrections', correctionRounds: 0, approver: '', logs: [], source: 'principal' }
+                ];
+            } else {
+                return [
+                    { id: 1, title: 'ANNUAL DAY PROMO', institution: 'MATRIC', medium: 'YOUTUBE', created: '20/07/2026, 03:34 pm', updated: '21/07/2026, 05:34 pm', assignee: 'JASON', status: 'Need Approval', correctionRounds: 0, approver: '', logs: [], source: 'founders' },
+                    { id: 2, title: 'KINDERZONE FEAST', institution: 'KIND CBE', medium: 'YOUTUBE', created: '10/07/2026, 01:34 pm', updated: '17/07/2026, 12:54 pm', assignee: 'Saravana', status: 'Need Approval', correctionRounds: 0, approver: '', logs: [], source: 'founders' },
+                    { id: 3, title: 'DIWALI CELEBRATION', institution: 'MATRIC', medium: 'YOUTUBE', created: '20/07/2026, 03:34 pm', updated: '21/07/2026, 05:34 pm', assignee: 'Mithun', status: 'Need Approval', correctionRounds: 0, approver: '', logs: [], source: 'founders' },
+                    { id: 4, title: 'ALUMNI PAGE', institution: 'CBSE CBE', medium: 'WEBSITE', created: '10/07/2026, 01:34 pm', updated: '17/07/2026, 12:54 pm', assignee: 'Shankar', status: 'Need Approval', correctionRounds: 0, approver: '', logs: [], source: 'founders' },
+                    { id: 5, title: 'PONGAL', institution: 'OLA', medium: 'META', created: '22/07/2026, 03:34 pm', updated: '24/07/2026, 04:34 pm', assignee: 'Benajmain', status: 'Corrections', correctionRounds: 1, approver: '', logs: ['Status changed to CORRECTIONS [21/07/2026, 09:51 am]'], source: 'founders' },
+                    { id: 6, title: 'SPORTS DAY REEL', institution: 'ORIGAMI', medium: 'META', created: '22/07/2026, 03:34 pm', updated: '24/07/2026, 04:34 pm', assignee: 'Benajmain', status: 'Corrections', correctionRounds: 0, approver: '', logs: [], source: 'founders' }
+                ];
+            }
+        }
+
+        let allTasks = loadAllTasks();
+
+        function getStatusBadge(status) {
+            const badges = {
+                'doing': '<span class="inline-block px-3 py-1 text-[10px] font-black uppercase rounded bg-teal-500 text-white tracking-wider shadow-sm">DOING</span>',
+                'corrections': '<span class="inline-block px-3 py-1 text-[10px] font-black uppercase rounded bg-orange-600 text-white tracking-wider shadow-sm">CORRECTIONS</span>',
+                'approval': '<span class="inline-block px-3 py-1 text-[10px] font-black uppercase rounded bg-purple-700 text-white tracking-wider shadow-sm">SEND FOR APPROVAL</span>',
+                'post': '<span class="inline-block px-3 py-1 text-[10px] font-black uppercase rounded bg-red-600 text-white tracking-wider shadow-sm">SEND FOR POST</span>',
+                'posted': '<span class="inline-block px-3 py-1 text-[10px] font-black uppercase rounded bg-blue-900 text-white tracking-wider shadow-sm">POSTED</span>',
+                'Need Approval': '<span class="inline-block px-3 py-1 text-[10px] font-black uppercase rounded bg-red-500 text-white tracking-wider shadow-sm">NEED APPROVAL</span>',
+                'Approved': '<span class="inline-block px-3 py-1 text-[10px] font-black uppercase rounded bg-green-600 text-white tracking-wider shadow-sm">APPROVED</span>'
+            };
+            return badges[status] || status;
+        }
+
+        function getMediumIcon(medium) {
+            const icons = {
+                'YOUTUBE': '🎬', 'META': '📘', 'LINKEDIN': '💼', 'WEBSITE': '🌐',
+                'EMAIL': '📧', 'FB': '📱', 'YS': '▶️'
+            };
+            return icons[medium] || '📄';
+        }
+
+        function renderDashboard() {
+            const tbody = document.getElementById('dashboardBody');
+            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+            const sortBy = document.getElementById('sortBy').value;
+            const sortOrder = document.getElementById('sortOrder').value;
+
+            // Filter tasks
+            let filtered = allTasks.filter(task => {
+                return task.title.toLowerCase().includes(searchTerm) ||
+                       task.institution.toLowerCase().includes(searchTerm) ||
+                       (task.medium && task.medium.toLowerCase().includes(searchTerm)) ||
+                       (task.assignee && task.assignee.toLowerCase().includes(searchTerm)) ||
+                       (task.linkedFile && task.linkedFile.toLowerCase().includes(searchTerm));
+            });
+
+            // Sort tasks
+            filtered.sort((a, b) => {
+                let valA = a[sortBy] || '';
+                let valB = b[sortBy] || '';
+                if (typeof valA === 'string') valA = valA.toLowerCase();
+                if (typeof valB === 'string') valB = valB.toLowerCase();
+                
+                if (valA < valB) return sortOrder === 'asc' ? -1 : 1;
+                if (valA > valB) return sortOrder === 'asc' ? 1 : -1;
+                return 0;
+            });
+
+            // Update task count
+            document.getElementById('taskCount').textContent = filtered.length + ' record' + (filtered.length !== 1 ? 's' : '');
+
+            tbody.innerHTML = filtered.map(task => {
+                const logsHtml = (task.logs && task.logs.length > 0) 
+                    ? task.logs.map(log => `<div class="text-[10px] text-gray-600 border-l-2 border-blue-300 pl-2 mb-1">${log}</div>`).join('')
+                    : '<div class="text-[10px] text-gray-400 italic">No records registered</div>';
+
+                return `
+                <tr class="border-b border-gray-200 hover:bg-gray-50 transition-colors">
+                    <td class="px-4 py-3 border-r border-gray-200 align-top">
+                        <div class="font-black text-xs text-gray-900 uppercase tracking-wide mb-1">${task.title}</div>
+                        <div class="flex flex-wrap gap-1 mb-1">
+                            <span class="px-1.5 py-0.5 text-[9px] font-bold uppercase bg-gray-200 text-gray-700 rounded">${task.institution}</span>
+                            <span class="px-1.5 py-0.5 text-[9px] font-bold uppercase bg-blue-100 text-blue-700 rounded flex items-center gap-0.5">${getMediumIcon(task.medium)} ${task.medium}</span>
+                            ${task.targetChannel ? `<span class="px-1.5 py-0.5 text-[9px] font-bold uppercase bg-purple-100 text-purple-700 rounded">${task.targetChannel}</span>` : ''}
+                        </div>
+                        ${task.linkedFile ? `<div class="text-[9px] text-gray-500 truncate" title="${task.linkedFile}">📍 ${task.linkedFile}</div>` : ''}
+                    </td>
+                    <td class="px-4 py-3 border-r border-gray-200 align-top text-center">
+                        ${getStatusBadge(task.status)}
+                    </td>
+                    <td class="px-4 py-3 border-r border-gray-200 align-top">
+                        <div class="space-y-1">
+                            <div class="flex items-center gap-1 text-[10px] text-gray-600">
+                                <span class="font-bold">📦 Size:</span> N/A
+                            </div>
+                            <div class="flex items-center gap-1 text-[10px] text-gray-600">
+                                <span class="font-bold">📁 Format:</span> N/A
+                            </div>
+                            <div class="flex items-center gap-1 text-[10px] text-gray-600">
+                                <span class="font-bold">🔄 Correction Rounds:</span> ${task.correctionRounds || 0}
+                            </div>
+                        </div>
+                    </td>
+                    <td class="px-4 py-3 border-r border-gray-200 align-top">
+                        <span class="text-xs font-medium ${task.approver ? 'text-gray-900' : 'text-gray-400 italic'}">
+                            ${task.approver || 'No approver assigned'}
+                        </span>
+                    </td>
+                    <td class="px-4 py-3 align-top">
+                        <div class="bg-gray-50 rounded-lg p-2 max-h-24 overflow-y-auto scrollbar-thin">
+                            ${logsHtml}
+                        </div>
+                    </td>
+                </tr>
+                `;
+            }).join('');
+
+            if (filtered.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="5" class="px-4 py-8 text-center text-gray-400 text-sm">
+                            No projects found matching your search criteria.
+                        </td>
+                    </tr>
+                `;
+            }
+        }
+
+        function filterTasks() {
+            renderDashboard();
+        }
+
+        function downloadCSV() {
+            const headers = ['ID', 'Title', 'Institution', 'Medium', 'Status', 'Assignee', 'Created', 'Updated', 'Correction Rounds', 'Approver'];
+            const rows = allTasks.map(t => [
+                t.id, t.title, t.institution, t.medium || '', t.status, t.assignee || '', t.created, t.updated, t.correctionRounds || 0, t.approver || ''
+            ]);
+
+            let csvContent = headers.join(',') + '\n';
+            rows.forEach(row => {
+                csvContent += row.map(cell => `"${String(cell).replace(/"/g, '""')}"`).join(',') + '\n';
+            });
+
+            const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+            const link = document.createElement('a');
+            const url = URL.createObjectURL(blob);
+            link.setAttribute('href', url);
+            link.setAttribute('download', 'lifecycle_dashboard_backup.csv');
+            link.style.visibility = 'hidden';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            alert('✅ CSV backup downloaded successfully!');
+        }
+
+        // Initialize dashboard
+        document.addEventListener('DOMContentLoaded', function() {
+            document.getElementById('sourceLabel').textContent = currentSourceConfig.name;
+            allTasks = loadAllTasks();
+            renderDashboard();
+        });
+
+        // Reload tasks on page load (in case of back navigation)
+        window.addEventListener('load', function() {
+            allTasks = loadAllTasks();
+            renderDashboard();
+        });
+    </script>
+</body>
+</html>
